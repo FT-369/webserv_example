@@ -6,17 +6,14 @@
 class Cluster {
 
     public :
-        Cluster() {};
-        Cluster(Cluster& other) {};
-        ~Cluster() {};
-        Cluster& operator= (const Cluster& other){};
+        Cluster();
+        Cluster(const Cluster& other);
+        ~Cluster();
+        Cluster& operator= (const Cluster& other);
         
         void config(char *file_path);
-        void setup();
-        int listen();
-
-    private :
-        std::map<std::pair<std::string, int>> config_field; 
+        // void setup();
+        // int listen();
 };
 
 #endif //CLUSTER_HPP

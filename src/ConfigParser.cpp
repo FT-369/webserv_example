@@ -6,21 +6,26 @@
 #include <fstream>
 
 ConfigParser::ConfigParser() {}
-ConfigParser::ConfigParser(const ConfigParser& other) {}
-ConfigParser::~ConfigParser() {}
-ConfigParser& ConfigParser::operator= (const ConfigParser& other) {}
-
-void ConfigParser::parseConfigFile(const char *file_path) {
-    std::ifstream   fs;
-    std::string     lines;
-    
+ConfigParser::ConfigParser(const char *file_path) {
     if (!*file_path) {
         file_path = DEFAULT_CONFIGFILE_PATH;
     }
     else {
         file_path_ = file_path;
     }
-    fs.open(file_path, std::ios::in);
+}
+ConfigParser::ConfigParser(const ConfigParser& other) { (void)other; }
+ConfigParser::~ConfigParser() {}
+ConfigParser& ConfigParser::operator= (const ConfigParser& other) {
+    (void)other;
+    return *this;
+}
+
+void ConfigParser::parseConfigFile(void) {
+    std::ifstream   fs;
+    std::string     lines;
+    
+    fs.open(file_path_, std::ios::in);
     if (!fs.is_open())
     {
         std::cerr << ERR_MSG_HAED << "file open err" << std::endl;

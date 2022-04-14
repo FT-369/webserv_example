@@ -3,8 +3,6 @@
 
 #include <map>
 
-#define DEFAULT_CONFIGFILE_PATH "./config./default.config"
-
 class ConfigParser
 {
     public :
@@ -14,7 +12,7 @@ class ConfigParser
 
         const char *getFilePath(void);
         std::map<std::string, std::string>& getAttribute(void);
-        void parseConfigFile(const char *file_path);
+        void parseConfigFile(void);
 
     private :
         ConfigParser();
