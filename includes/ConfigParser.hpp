@@ -11,17 +11,16 @@ class ConfigParser {
     ConfigParser& operator= (const ConfigParser& other);
 
     const char *getFilePath(void);
-    std::map<std::string, std::string>& getAttribute(void);
     void parseConfigFile(void);
+
  private :
     ConfigParser();
     ConfigParser(const ConfigParser& other);
-    void parseDerectivelineInMain(std::string line);
+    void parseMainContext(std::string& line);
 
     const char *file_path_;
     std::map<std::string, std::string> mainDirectives;
-    std::multimap<std::string, std::map<std::string, std::string> > d;
-    
+    std::map<std::string, std::string> eventDirectives;
 };
 
 #endif  // INCLUDES_CONFIGPARSER_HPP_
