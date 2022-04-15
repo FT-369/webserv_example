@@ -86,6 +86,15 @@ static size_t getLastBracketIndex(std::string& line)
     return idx;
 }
 
+static bool isKeywordBlock(std::string& line) {
+    std::string::iterator it = line.begin();
+    for (; it != line.end(); it++) {
+        if (isalpha(*it))
+            break ;
+    }
+    return it == line.end() ? false : true;
+}
+
 static std::string getkeywordBlock(std::string& line)
 {
     size_t start = 0;
@@ -93,6 +102,8 @@ static std::string getkeywordBlock(std::string& line)
         start++;
     size_t idx = line.find_first_of(" \t\r\n{", start);
     std::string ret = line.substr(start, idx - start);
+    if (!isKeywordBlock(ret))
+        std::cout << "Error !!!!!!!!" << ret << "!!!!!!!!!!!" << std::endl;
     line.erase(0, ret.length());
     return ret;
 }
@@ -182,13 +193,25 @@ void ConfigParser::parseHTTPBlock(std::string& lines) {
     }
 }
 
+
 void ConfigParser::parseServerBlock(std::string& lines) {
-    (void)lines;
+    // 두번째 인자는 로직 입증을 위해 임시로 넣어둠
+    // 향후 구현 방향에 따라 서버 블록 내의 Directives를 저장할 수 있도록 알맞게 수정해야함.
+    parseDirectives(lines, this->eventDirectives); 
+    while (lines.find('{', 0) != STRING_NPOS) {
+        parseBlock(lines);
+    }
     return ;
 }
 
 void ConfigParser::parseBlock (std::string& lines) {
     std::pair<std::string, std::string> blockContents = make_pair(getkeywordBlock(lines), getvaluesBlock(lines));
+    if (blockContents.first.length() == 0)
+    {
+        std::cout << "ak!" << std::endl;
+        return ;
+    }
+    std::cout << blockContents.first << std::endl;
     if (!blockContents.first.compare("events")) {
         parseEventsBlock(blockContents.second);
     }
@@ -196,6 +219,9 @@ void ConfigParser::parseBlock (std::string& lines) {
         parseHTTPBlock(blockContents.second);
     }
     if (!blockContents.first.compare("server")) {
+        parseServerBlock(blockContents.second);
+    }
+    if (blockContents.first.length() > 8 && !blockContents.first.find("location", 0, 8)) {
         parseServerBlock(blockContents.second);
     }
 }
