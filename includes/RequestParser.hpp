@@ -77,7 +77,7 @@ int RequestParser::parseRequest()
 	return SUCCESS;
 }
 
-int RequestParser::parseRequestLine()
+int RequestParser::parseRequestLine() // 시작줄 파싱
 {
 	char line[GET_LINE_BUF];
 	std::string str_line;
@@ -113,7 +113,7 @@ int RequestParser::parseRequestHeader()
 	std::string str_line, key, value;
 	std::vector<std::string> key_value;
 
-	fgets(line, GET_LINE_BUF, getSocketReadFP());
+	fgets(line, GET_LINE_BUF, getSocketReadFP()); // do
 	str_line = std::string(line);
 	while (str_line != "" && str_line != "\r\n")
 	{
@@ -126,8 +126,9 @@ int RequestParser::parseRequestHeader()
 
 		key = key_value[0];
 		value = key_value[1].replace(key_value[1].find("\r\n"), 2, "\0");
-		_request_header.insert(std::make_pair<std::string, std::string>(key, value));
-
+		_request_header[key] = value;
+		// _request_header.insert(std::make_pair<std::string, std::string>(key, value));
+	
 		fgets(line, GET_LINE_BUF, getSocketReadFP());
 		str_line = std::string(line);
 	}
