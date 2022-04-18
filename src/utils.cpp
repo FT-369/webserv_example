@@ -15,3 +15,22 @@ std::vector<std::string> split(std::string const line, std::string const delimit
 
 	return words;
 }
+
+std::string ft_fgets_line(FILE* fp)
+{
+	char line[GET_LINE_BUF] = { 0, };
+	std::string getline;
+	size_t len;
+
+	if (!fgets(line, GET_LINE_BUF, fp))
+		return getline;
+	getline = std::string(line);
+	
+	while ((len = std::strlen(line)) && line[len - 1] != '\n')
+	{
+		if (!fgets(line, GET_LINE_BUF, fp))
+			return getline;
+		getline += std::string(line);
+	}
+	return getline;
+}
