@@ -1,6 +1,6 @@
 #include "utils.hpp"
 
-std::vector<std::string> split(std::string const line, std::string const delimiter)
+std::vector<std::string> ft_split(std::string const line, std::string const delimiter)
 {
 	std::vector<std::string> words;
 	std::string new_line = line;
