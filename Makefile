@@ -7,7 +7,7 @@ RM				= rm -rf
 OBJDIR			= ./obj/
 SRCDIR			= ./src/
 MAIN			= main.cpp
-SRCS			= ConfigParser.cpp
+SRCS			= ConfigParser.cpp RequestParser.cpp
 
 MAIN_OBJS_FILE	= $(MAIN:.cpp=.o)
 MAIN_OBJS		= $(addprefix $(OBJDIR), $(MAIN_OBJS_FILE))
