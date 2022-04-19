@@ -146,38 +146,6 @@ static void parseDirectives(std::string& lines, std::map<std::string, std::strin
     }
 }
 
-static void parseDirectives(std::string& lines, std::multimap<std::string, std::string>& map)
-{
-    std::size_t idx_first_block = lines.find("{", 1);
-    std::string tmp, key, value;
-    for (std::size_t base = 0, found = 0;;)
-    {
-        while (isspace(lines[base])) base++;
-        found = lines.find(";", base);
-        if (found > idx_first_block || found == STRING_NPOS) {
-            lines.erase(0, base);
-            break;
-        }
-        tmp = lines.substr(base, found - base);
-        std::string::iterator it = tmp.begin();
-        while (isalpha(*it) || isSpecialCharactersBlockKeyword(*it)) {
-            key += *it;
-            it++;
-        }
-        while (isspace(*it))
-            it++;
-        while (it != tmp.end()) {
-            value += *it;
-            it++;
-        }
-        map.insert(make_pair(key, value));
-        key.clear();
-        value.clear();
-        base = found + 1;
-    }
-}
-
-
 void ConfigParser::parseMainContext(std::string& lines) {
     parseDirectives(lines, this->mainDirectives);
 }
