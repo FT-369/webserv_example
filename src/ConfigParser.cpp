@@ -199,6 +199,9 @@ void ConfigParser::parseBlock (std::string& lines) {
     if (!blockContents.first.compare("server")) {
         parseServerBlock(blockContents.second, this->serverBlocks);
     }
+    if (blockContents.first.length() >= 8 && blockContents.first.find("location", 0) != STRING_NPOS) {
+        parseServerBlock(blockContents.second, this->serverBlocks);
+    }
 }
 
 
