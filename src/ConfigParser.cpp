@@ -1,6 +1,7 @@
   // Copyright [2022] <Two-Jay>
 
 #include "../includes/ConfigParser.hpp"
+#include "../includes/testFunctions.hpp"
 #include "../includes/webserv.hpp"
 #include <iostream>
 #include <map>
@@ -110,12 +111,13 @@ static std::string getkeywordBlock(std::string& line)
 
 static std::string getvaluesBlock(std::string& lines) {
     size_t bracket_end_idx = getLastBracketIndex(lines);
-    std::string ret = lines.substr(lines.find('{', 0), bracket_end_idx);
+    size_t bracket_start_idx = lines.find('{', 0);
+    std::string ret = lines.substr(++bracket_start_idx, bracket_end_idx);
     lines.erase(0, ret.length());
     return ret;
 }
 
-static void parseDirectives(std::string& lines, std::map<std::string, std::string>& map)
+static void parseDirectives(std::string& lines, std::map<std::string, std::vector<std::string> >& map)
 {
     std::size_t idx_first_block = lines.find("{", (lines[0] == '{'));
     std::string tmp, key, value;
@@ -139,7 +141,14 @@ static void parseDirectives(std::string& lines, std::map<std::string, std::strin
             value += *it;
             it++;
         }
-        map.insert(make_pair(key, value));
+        if (map.find(key) == map.end()) {
+            std::vector<std::string> bucket;
+            bucket.push_back(value);
+            map.insert(make_pair(key, bucket));
+        }
+        else {
+            map.find(key)->second.push_back(value);
+        }
         key.clear();
         value.clear();
         base = found + 1;
@@ -161,14 +170,15 @@ void ConfigParser::parseHTTPBlock(std::string& lines) {
     }
 }
 
-
-void ConfigParser::parseServerBlock(std::string& lines) {
+void ConfigParser::parseServerBlock(std::string& lines, std::vector<std::map<std::string, std::vector<std::string> > >&  a) {
     // 두번째 인자는 로직 입증을 위해 임시로 넣어둠
     // 향후 구현 방향에 따라 서버 블록 내의 Directives를 저장할 수 있도록 알맞게 수정해야함.
-    parseDirectives(lines, this->eventDirectives); 
+    std::map<std::string, std::vector<std::string> > t;
+    parseDirectives(lines, t);
     while (lines.find('{', 0) != STRING_NPOS) {
         parseBlock(lines);
     }
+    a.push_back(t);
     return ;
 }
 
@@ -187,18 +197,11 @@ void ConfigParser::parseBlock (std::string& lines) {
         parseHTTPBlock(blockContents.second);
     }
     if (!blockContents.first.compare("server")) {
-        parseServerBlock(blockContents.second);
-    }
-    if (blockContents.first.length() > 8 && !blockContents.first.find("location", 0, 8)) {
-        parseServerBlock(blockContents.second);
+        parseServerBlock(blockContents.second, this->serverBlocks);
     }
 }
 
-void ConfigParser::showSizeDirectives(void) {
-    std::cout << "main :" << this->mainDirectives.size() << std::endl;
-    std::cout << "event :" << this->eventDirectives.size() << std::endl;
-    std::cout << "http :" << this->httpDirectives.size() << std::endl;
-};
+
 
 void ConfigParser::parseConfigFile(void) {
     std::ifstream   fs;
@@ -221,5 +224,22 @@ void ConfigParser::parseConfigFile(void) {
     while (lines.find('{', 0) != STRING_NPOS) {
         parseBlock(lines);
     }
-    showSizeDirectives();
+    test_map_data_print();
+}
+
+void test_serverBlock_print(std::vector<std::map<std::string, std::vector<std::string> > >& a) {
+    for (std::vector<std::map<std::string, std::vector<std::string> > >::iterator it = a.begin(); it != a.end(); it++) {
+        test::showParsedDirectives(*it);
+    }
+}
+
+void ConfigParser::test_map_data_print(void) {
+    std::cout << "main -------------" << std::endl;
+    test::showParsedDirectives(this->mainDirectives);
+    std::cout << "events -------------" << std::endl;
+    test::showParsedDirectives(this->eventDirectives);
+    std::cout << "http -------------" << std::endl;
+    test::showParsedDirectives(this->httpDirectives);
+    std::cout << "server -------------" << std::endl;
+    test_serverBlock_print(this->serverBlocks);
 }
