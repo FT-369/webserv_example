@@ -158,6 +158,20 @@ void ConfigParser::parseHTTPBlock(std::string& lines) {
     }
 }
 
+void parseLocationURLinfo (std::string& lines, std::map<std::string, std::vector<std::string> >& bucket) {
+        lines.erase(0, 8);
+        size_t cut_start = 0;
+        while (isspace(lines[cut_start])) cut_start++;
+        size_t first_bracket_appeared_idx = lines.find("{", 0);
+        std::string ret = lines.substr(cut_start, --first_bracket_appeared_idx);
+        lines.erase(0, first_bracket_appeared_idx);
+        std::cout << lines << std::endl;
+        std::vector<std::string> v;
+        v.push_back(ret);
+        bucket.insert(make_pair("location_URL_info", v));
+        lines.insert(0, "location ");
+}
+
 void ConfigParser::parseServerBlock(std::string& lines,
     std::vector<std::map<std::string, std::vector<std::string> > >&  a) {
     // 두번째 인자는 로직 입증을 위해 임시로 넣어둠
@@ -165,6 +179,7 @@ void ConfigParser::parseServerBlock(std::string& lines,
     std::map<std::string, std::vector<std::string> > t;
     parseDirectives(lines, t);
     while (lines.find('{', 0) != STRING_NPOS) {
+        parseLocationURLinfo(lines, t);
         parseBlock(lines);
     }
     if (t.size() != 0) a.push_back(t);
