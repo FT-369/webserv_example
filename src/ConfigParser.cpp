@@ -165,7 +165,6 @@ void parseLocationURLinfo (std::string& lines, std::map<std::string, std::vector
         size_t first_bracket_appeared_idx = lines.find("{", 0);
         std::string ret = lines.substr(cut_start, --first_bracket_appeared_idx);
         lines.erase(0, first_bracket_appeared_idx);
-        std::cout << lines << std::endl;
         std::vector<std::string> v;
         v.push_back(ret);
         bucket.insert(make_pair("location_URL_info", v));
@@ -191,7 +190,6 @@ void ConfigParser::parseBlock(std::string& lines) {
         std::cout << "ak!" << std::endl;
         return;
     }
-    std::cout << blockContents.first << std::endl;
     if (!blockContents.first.compare("events")) {
         parseEventsBlock(blockContents.second);
     }
