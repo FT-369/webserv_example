@@ -1,10 +1,11 @@
+  // Copyright [2022] <Two-Jay>
+
 #ifndef INCLUDES_CONFIGPARSER_HPP_
 #define INCLUDES_CONFIGPARSER_HPP_
 
 #include <map>
 #include <vector>
 #include <string>
-#include "./HTTPmoduler.hpp"
 
 class ConfigParser {
  public :
@@ -22,13 +23,17 @@ class ConfigParser {
     void parseMainContext(std::string& lines);
     void parseEventsBlock(std::string& lines);
     void parseHTTPBlock(std::string& lines);
-    void parseServerBlock(std::string& lines);
-    void showSizeDirectives(void);
+    void parseUpstreamBlock(std::string& lines);
+    void parseServerBlock(std::string& lines,
+      std::vector<std::map<std::string, std::vector<std::string> > >& a);
+    void test_map_data_print(void);
 
     const char *file_path_;
-    std::map<std::string, std::string>  mainDirectives;
-    std::map<std::string, std::string>  eventDirectives;
-    std::multimap<std::string, std::string> httpDirectives;
+    std::map<std::string, std::vector<std::string> >  mainDirectives;
+    std::map<std::string, std::vector<std::string> >  eventDirectives;
+    std::map<std::string, std::vector<std::string> > httpDirectives;
+    std::map<std::string, std::vector<std::string> > upstreamDirectives;
+    std::vector<std::map<std::string, std::vector<std::string> > > serverBlocks;
 };
 
 #endif  // INCLUDES_CONFIGPARSER_HPP_
