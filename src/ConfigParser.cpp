@@ -158,17 +158,17 @@ void ConfigParser::parseHTTPBlock(std::string& lines) {
     }
 }
 
-void parseLocationURLinfo (std::string& lines, std::map<std::string, std::vector<std::string> >& bucket) {
-        lines.erase(0, 8);
-        size_t cut_start = 0;
-        while (isspace(lines[cut_start])) cut_start++;
-        size_t first_bracket_appeared_idx = lines.find("{", 0);
-        std::string ret = lines.substr(cut_start, --first_bracket_appeared_idx);
-        lines.erase(0, first_bracket_appeared_idx);
-        std::vector<std::string> v;
-        v.push_back(ret);
-        bucket.insert(make_pair("location_URL_info", v));
-        lines.insert(0, "location ");
+void parseLocationURLinfo(std::string& lines, std::map<std::string, std::vector<std::string> >& bucket) {
+    lines.erase(0, 8);
+    size_t cut_start = 0;
+    size_t first_bracket_appeared_idx = lines.find("{", 0);
+    std::vector<std::string> v;
+    while (isspace(lines[cut_start])) cut_start++;
+    std::string ret = lines.substr(cut_start, --first_bracket_appeared_idx);
+    lines.erase(0, first_bracket_appeared_idx);
+    v.push_back(ret);
+    bucket.insert(make_pair("location_URL_info", v));
+    lines.insert(0, "location ");
 }
 
 void ConfigParser::parseServerBlock(std::string& lines,
